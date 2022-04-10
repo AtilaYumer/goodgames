@@ -1,1 +1,1 @@
-web: java -jar target/goodgames-0.0.1-SNAPSHOT.jar
+web: java -jar target/goodgames-backend-0.0.1-SNAPSHOT.jar
