@@ -1,6 +1,6 @@
 package com.konak.goodgames.util;
 
-import com.konak.goodgames.domain.model.User;
+import com.konak.goodgames.domain.model.CustomUserDetails;
 import com.konak.goodgames.service.CustomUserDetailsService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -36,9 +36,9 @@ public class JwtTokenUtil implements Serializable {
     return getClaimFromToken(token, Claims::getSubject);
   }
 
-  public String generateToken(User user) {
+  public String generateToken(CustomUserDetails userDetails) {
     Map<String, Object> claims = new HashMap<>();
-    return doGenerateToken(claims, user.getEmail());
+    return doGenerateToken(claims, userDetails.getUsername());
   }
 
   private String doGenerateToken(Map<String, Object> claims, String subject) {

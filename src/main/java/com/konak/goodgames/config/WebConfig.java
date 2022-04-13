@@ -5,9 +5,11 @@ import com.konak.goodgames.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -25,6 +27,7 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableGlobalMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
 public class WebConfig extends WebSecurityConfigurerAdapter {
 
   private final JwtTokenFilter jwtTokenFilter;
@@ -33,7 +36,7 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-    auth.userDetailsService(customUserDetailsService);
+    auth.userDetailsService(customUserDetailsService).passwordEncoder(passwordEncoder());
   }
 
   @Override
@@ -55,7 +58,7 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
         .permitAll()
         .antMatchers(HttpMethod.GET, "/application/test")
         .permitAll()
-        .antMatchers(HttpMethod.POST, "/users")
+        .antMatchers(HttpMethod.POST, "/users/login")
         .permitAll()
         .anyRequest()
         .authenticated();
@@ -72,6 +75,7 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
   public CorsFilter corsFilter() {
     final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     CorsConfiguration config = new CorsConfiguration();
+    config.setExposedHeaders(List.of(HttpHeaders.AUTHORIZATION));
     config.setAllowCredentials(true);
     config.setAllowedOriginPatterns(List.of("*"));
     config.setAllowedHeaders(
