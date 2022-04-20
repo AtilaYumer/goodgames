@@ -58,7 +58,7 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
         .permitAll()
         .and()
         .authorizeRequests()
-        .antMatchers(HttpMethod.POST, "/users/**")
+        .antMatchers("/users/**")
         .permitAll()
         .and()
         .authorizeRequests()
