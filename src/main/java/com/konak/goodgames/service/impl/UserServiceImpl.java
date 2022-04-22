@@ -4,6 +4,8 @@ import com.konak.goodgames.domain.dto.UserDto;
 import com.konak.goodgames.domain.dto.UserInfoDto;
 import com.konak.goodgames.domain.model.CustomUserDetails;
 import com.konak.goodgames.domain.model.User;
+import com.konak.goodgames.exception.ConflictException;
+import com.konak.goodgames.exception.NotFoundException;
 import com.konak.goodgames.repository.UserRepository;
 import com.konak.goodgames.service.UserService;
 import com.konak.goodgames.util.JwtTokenUtil;
@@ -18,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +36,10 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public void register(UserDto userDto) {
+    Optional<User> userByEmail = userRepository.findByEmail(userDto.getEmail());
+    if (userByEmail.isPresent()) {
+      throw new ConflictException("User already exists!");
+    }
     User user = modelMapperService.map(userDto, User.class);
     userRepository.save(user);
   }
@@ -49,7 +56,7 @@ public class UserServiceImpl implements UserService {
       response.addHeader(HttpHeaders.AUTHORIZATION, jwtTokenUtil.generateToken(userDetails));
       response.setStatus(HttpStatus.OK.value());
     } catch (BadCredentialsException ex) {
-      response.setStatus(HttpStatus.UNAUTHORIZED.value());
+      throw new NotFoundException("Invalid credentials!");
     }
   }
 
