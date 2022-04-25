@@ -3,6 +3,7 @@ package com.konak.goodgames.service.impl;
 import com.konak.goodgames.domain.dto.GameTitleDto;
 import com.konak.goodgames.domain.dto.UserDto;
 import com.konak.goodgames.domain.model.GameTitle;
+import com.konak.goodgames.domain.model.Like;
 import com.konak.goodgames.domain.model.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,6 +15,7 @@ public class ModelMapperService extends ModelMapper {
   public ModelMapperService() {
     userDtoToUser();
     gameTitleToGameTitleDto();
+    likeToLong();
   }
 
   private void userDtoToUser() {
@@ -41,8 +43,18 @@ public class ModelMapperService extends ModelMapper {
                 User createdBy = source.getCreatedBy();
                 destination.setCreatedBy(
                     String.format("%s %s", createdBy.getFirstName(), createdBy.getLastName()));
+                destination.setCreatedById(createdBy.getId());
               }
               return destination;
+            });
+  }
+
+  private void likeToLong() {
+    createTypeMap(Like.class, Long.class)
+        .setPostConverter(
+            mappingContext -> {
+              Like source = mappingContext.getSource();
+              return source.getCreatedBy().getId();
             });
   }
 }

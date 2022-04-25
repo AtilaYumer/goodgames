@@ -3,6 +3,8 @@ package com.konak.goodgames.domain.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class GameTitleDto {
@@ -15,4 +17,8 @@ public class GameTitleDto {
   private String imageUrl;
 
   private String createdBy;
+
+  private long createdById;
+
+  private List<Long> likes;
 }

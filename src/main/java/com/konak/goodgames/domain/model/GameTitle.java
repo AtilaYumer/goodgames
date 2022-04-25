@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -33,4 +34,7 @@ public class GameTitle {
   @CreatedBy
   @JoinColumn(name = "created_by")
   private User createdBy;
+
+  @OneToMany(mappedBy = "gameTitle")
+  private List<Like> likes;
 }

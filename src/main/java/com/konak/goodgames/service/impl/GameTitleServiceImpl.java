@@ -61,6 +61,13 @@ public class GameTitleServiceImpl implements GameTitleService {
     return mapperService.map(gameTitle, GameTitleDto.class);
   }
 
+  @Override
+  public GameTitle getGameTitle(long gameTitleId) {
+    return gameTitleRepository
+        .findById(gameTitleId)
+        .orElseThrow(() -> new NotFoundException("Game title not found"));
+  }
+
   private File getImageFile(MultipartFile image) throws IOException {
 
     InputStream initialStream = image.getInputStream();
