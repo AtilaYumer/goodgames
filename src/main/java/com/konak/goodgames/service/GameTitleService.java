@@ -9,4 +9,6 @@ public interface GameTitleService {
     void createGameTitle(CreateGameTitleDto dto) throws Exception;
 
     Page<GameTitleDto> getGameTitles(Pageable pageable);
+
+    GameTitleDto getGameTitleById(long id);
 }

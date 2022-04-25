@@ -13,4 +13,6 @@ public class GameTitleDto {
   private String description;
 
   private String imageUrl;
+
+  private String createdBy;
 }

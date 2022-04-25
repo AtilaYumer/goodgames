@@ -32,5 +32,5 @@ public class GameTitle {
   @ManyToOne
   @CreatedBy
   @JoinColumn(name = "created_by")
-  private User created_by;
+  private User createdBy;
 }

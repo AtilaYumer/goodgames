@@ -3,6 +3,7 @@ package com.konak.goodgames.service.impl;
 import com.konak.goodgames.domain.dto.CreateGameTitleDto;
 import com.konak.goodgames.domain.dto.GameTitleDto;
 import com.konak.goodgames.domain.model.GameTitle;
+import com.konak.goodgames.exception.NotFoundException;
 import com.konak.goodgames.repository.GameTitleRepository;
 import com.konak.goodgames.service.BlobStorageService;
 import com.konak.goodgames.service.GameTitleService;
@@ -14,7 +15,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Random;
 
@@ -45,6 +50,15 @@ public class GameTitleServiceImpl implements GameTitleService {
             gameTitles.getContent(), new TypeToken<List<GameTitleDto>>() {}.getType()),
         pageable,
         gameTitles.getTotalPages());
+  }
+
+  @Override
+  public GameTitleDto getGameTitleById(long id) {
+    GameTitle gameTitle =
+        gameTitleRepository
+            .findById(id)
+            .orElseThrow(() -> new NotFoundException("Game title not found"));
+    return mapperService.map(gameTitle, GameTitleDto.class);
   }
 
   private File getImageFile(MultipartFile image) throws IOException {

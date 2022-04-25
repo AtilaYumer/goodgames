@@ -1,6 +1,8 @@
 package com.konak.goodgames.service.impl;
 
+import com.konak.goodgames.domain.dto.GameTitleDto;
 import com.konak.goodgames.domain.dto.UserDto;
+import com.konak.goodgames.domain.model.GameTitle;
 import com.konak.goodgames.domain.model.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -11,6 +13,7 @@ public class ModelMapperService extends ModelMapper {
 
   public ModelMapperService() {
     userDtoToUser();
+    gameTitleToGameTitleDto();
   }
 
   private void userDtoToUser() {
@@ -23,6 +26,22 @@ public class ModelMapperService extends ModelMapper {
               BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
               String encodedPassword = bCryptPasswordEncoder.encode(source.getPassword());
               destination.setPassword(encodedPassword);
+              return destination;
+            });
+  }
+
+  private void gameTitleToGameTitleDto() {
+    createTypeMap(GameTitle.class, GameTitleDto.class)
+        .setPostConverter(
+            mappingContext -> {
+              GameTitle source = mappingContext.getSource();
+              GameTitleDto destination = mappingContext.getDestination();
+
+              if (source.getCreatedBy() != null) {
+                User createdBy = source.getCreatedBy();
+                destination.setCreatedBy(
+                    String.format("%s %s", createdBy.getFirstName(), createdBy.getLastName()));
+              }
               return destination;
             });
   }
