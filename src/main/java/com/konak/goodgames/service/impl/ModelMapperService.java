@@ -1,7 +1,9 @@
 package com.konak.goodgames.service.impl;
 
+import com.konak.goodgames.domain.dto.CommentDto;
 import com.konak.goodgames.domain.dto.GameTitleDto;
 import com.konak.goodgames.domain.dto.UserDto;
+import com.konak.goodgames.domain.model.Comment;
 import com.konak.goodgames.domain.model.GameTitle;
 import com.konak.goodgames.domain.model.Like;
 import com.konak.goodgames.domain.model.User;
@@ -16,6 +18,7 @@ public class ModelMapperService extends ModelMapper {
     userDtoToUser();
     gameTitleToGameTitleDto();
     likeToLong();
+    commentToCommentDto();
   }
 
   private void userDtoToUser() {
@@ -55,6 +58,20 @@ public class ModelMapperService extends ModelMapper {
             mappingContext -> {
               Like source = mappingContext.getSource();
               return source.getCreatedBy().getId();
+            });
+  }
+
+  private void commentToCommentDto() {
+    createTypeMap(Comment.class, CommentDto.class)
+        .setPostConverter(
+            mappingContext -> {
+              Comment source = mappingContext.getSource();
+              CommentDto destination = mappingContext.getDestination();
+
+              destination.setUserId(source.getCreatedBy().getId());
+              destination.setComment(source.getComment());
+
+              return destination;
             });
   }
 }

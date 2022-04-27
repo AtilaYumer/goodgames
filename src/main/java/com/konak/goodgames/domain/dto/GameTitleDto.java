@@ -21,4 +21,6 @@ public class GameTitleDto {
   private long createdById;
 
   private List<Long> likes;
+
+  private List<CommentDto> comments;
 }

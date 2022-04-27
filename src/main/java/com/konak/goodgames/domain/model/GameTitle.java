@@ -37,4 +37,7 @@ public class GameTitle {
 
   @OneToMany(mappedBy = "gameTitle")
   private List<Like> likes;
+
+  @OneToMany(mappedBy = "gameTitle")
+  private List<Comment> comments;
 }
