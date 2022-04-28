@@ -2,11 +2,14 @@ package com.konak.goodgames.domain.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -35,9 +38,12 @@ public class GameTitle {
   @JoinColumn(name = "created_by")
   private User createdBy;
 
+  @CreatedDate private LocalDateTime createdDate;
+
   @OneToMany(mappedBy = "gameTitle")
   private List<Like> likes;
 
   @OneToMany(mappedBy = "gameTitle")
+  @OrderBy("createdDate desc")
   private List<Comment> comments;
 }

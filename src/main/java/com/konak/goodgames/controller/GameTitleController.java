@@ -6,6 +6,7 @@ import com.konak.goodgames.service.GameTitleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,8 @@ public class GameTitleController {
   }
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-  public Page<GameTitleDto> getGameTitles(@PageableDefault Pageable pageable) {
+  public Page<GameTitleDto> getGameTitles(
+      @PageableDefault(sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable) {
     return gameTitleService.getGameTitles(pageable);
   }
 
