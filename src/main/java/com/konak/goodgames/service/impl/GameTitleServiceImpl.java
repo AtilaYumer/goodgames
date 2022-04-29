@@ -3,11 +3,14 @@ package com.konak.goodgames.service.impl;
 import com.konak.goodgames.domain.dto.CreateGameTitleDto;
 import com.konak.goodgames.domain.dto.GameTitleDto;
 import com.konak.goodgames.domain.model.GameTitle;
+import com.konak.goodgames.exception.BadRequestException;
 import com.konak.goodgames.exception.NotFoundException;
 import com.konak.goodgames.repository.GameTitleRepository;
 import com.konak.goodgames.service.BlobStorageService;
 import com.konak.goodgames.service.GameTitleService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -21,9 +24,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class GameTitleServiceImpl implements GameTitleService {
 
@@ -40,6 +45,25 @@ public class GameTitleServiceImpl implements GameTitleService {
     GameTitle gameTitle = mapperService.map(dto, GameTitle.class);
     gameTitle.setImageUrl(imageUrl);
     gameTitleRepository.save(gameTitle);
+  }
+
+  @Override
+  public void updateGameTitle(long gameTitleId, CreateGameTitleDto createGameTitleDto) throws IOException {
+      GameTitle gameTitle =
+          gameTitleRepository
+              .findById(gameTitleId)
+              .orElseThrow(() -> new NotFoundException("Game title not found"));
+      gameTitle.setTitle(createGameTitleDto.getTitle());
+      gameTitle.setDescription(createGameTitleDto.getDescription());
+      if (!Objects.isNull(createGameTitleDto.getImage())) {
+        blobStorageService.delete(gameTitle.getImageUrl());
+        String imageUrl =
+            blobStorageService.upload(
+                getImageFile(createGameTitleDto.getImage()),
+                createGameTitleDto.getImage().getContentType());
+        gameTitle.setImageUrl(imageUrl);
+      }
+      gameTitleRepository.save(gameTitle);
   }
 
   @Override
@@ -66,6 +90,21 @@ public class GameTitleServiceImpl implements GameTitleService {
     return gameTitleRepository
         .findById(gameTitleId)
         .orElseThrow(() -> new NotFoundException("Game title not found"));
+  }
+
+  @Override
+  public void delete(long gameTitleId) throws IOException {
+    try {
+      GameTitle gameTitle =
+          gameTitleRepository
+              .findById(gameTitleId)
+              .orElseThrow(() -> new NotFoundException("Game title not found"));
+      blobStorageService.delete(gameTitle.getImageUrl());
+      gameTitleRepository.deleteById(gameTitleId);
+    } catch (IOException e) {
+      log.error("Cannot delete image because {}", e.getMessage());
+      throw e;
+    }
   }
 
   private File getImageFile(MultipartFile image) throws IOException {

@@ -68,6 +68,9 @@ public class ModelMapperService extends ModelMapper {
               Comment source = mappingContext.getSource();
               CommentDto destination = mappingContext.getDestination();
 
+              User createdBy = source.getCreatedBy();
+              destination.setUsername(
+                  String.format("%s %s", createdBy.getFirstName(), createdBy.getLastName()));
               destination.setUserId(source.getCreatedBy().getId());
               destination.setComment(source.getComment());
 

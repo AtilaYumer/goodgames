@@ -5,4 +5,6 @@ import java.io.IOException;
 
 public interface BlobStorageService {
     String upload(File file, String mimeType) throws IOException;
+
+    void delete(String id) throws IOException;
 }

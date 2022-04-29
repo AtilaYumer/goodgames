@@ -37,4 +37,18 @@ public class BlobStorageServiceImpl implements BlobStorageService {
       throw new IOException(e.getMessage());
     }
   }
+
+  @Override
+  public void delete(String url) throws IOException {
+    try {
+      String fileId = extractFileIdFromUrl(url);
+      driveService.files().delete(fileId).execute();
+    } catch (IOException e) {
+      log.error("Cannot delete file to blob: {}", e.getMessage());
+    }
+  }
+
+  private String extractFileIdFromUrl(String url) {
+    return url.substring(GOOGLE_DRIVE_IMAGE_URL.length());
+  }
 }

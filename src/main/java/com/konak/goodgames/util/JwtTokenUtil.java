@@ -1,8 +1,10 @@
 package com.konak.goodgames.util;
 
 import com.konak.goodgames.domain.model.CustomUserDetails;
+import com.konak.goodgames.exception.NotAuthorizedException;
 import com.konak.goodgames.service.CustomUserDetailsService;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
@@ -57,7 +59,11 @@ public class JwtTokenUtil implements Serializable {
   }
 
   private Claims getAllClaimsFromToken(String token) {
+    try{
     return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+    } catch (ExpiredJwtException e) {
+      throw new NotAuthorizedException("User not authorized!");
+    }
   }
 
   private Boolean isTokenExpired(String token) {
