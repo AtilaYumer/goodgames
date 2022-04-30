@@ -48,6 +48,12 @@ public class GameTitleController {
     return gameTitleService.getGameTitles(pageable);
   }
 
+  @GetMapping(path = "/my-game-titles", produces = MediaType.APPLICATION_JSON_VALUE)
+  public Page<GameTitleDto> getMyGameTitles(
+          @PageableDefault(sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable) {
+    return gameTitleService.getMyGameTitles(pageable);
+  }
+
   @GetMapping(path = "/{gameTitleId}")
   public GameTitleDto getGameTitleById(@PathVariable long gameTitleId) {
     return gameTitleService.getGameTitleById(gameTitleId);

@@ -2,12 +2,14 @@ package com.konak.goodgames.service.impl;
 
 import com.konak.goodgames.domain.dto.CreateGameTitleDto;
 import com.konak.goodgames.domain.dto.GameTitleDto;
+import com.konak.goodgames.domain.dto.UserInfoDto;
 import com.konak.goodgames.domain.model.GameTitle;
 import com.konak.goodgames.exception.BadRequestException;
 import com.konak.goodgames.exception.NotFoundException;
 import com.konak.goodgames.repository.GameTitleRepository;
 import com.konak.goodgames.service.BlobStorageService;
 import com.konak.goodgames.service.GameTitleService;
+import com.konak.goodgames.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
@@ -32,6 +34,7 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class GameTitleServiceImpl implements GameTitleService {
 
+  private final UserService userService;
   private final GameTitleRepository gameTitleRepository;
 
   private final BlobStorageService blobStorageService;
@@ -105,6 +108,17 @@ public class GameTitleServiceImpl implements GameTitleService {
       log.error("Cannot delete image because {}", e.getMessage());
       throw e;
     }
+  }
+
+  @Override
+  public Page<GameTitleDto> getMyGameTitles(Pageable pageable) {
+    UserInfoDto userInfo = userService.getUserInfo();
+    Page<GameTitle> gameTitles = gameTitleRepository.findAllByCreatedById(userInfo.getId(), pageable);
+    return new PageImpl<>(
+            mapperService.map(
+                    gameTitles.getContent(), new TypeToken<List<GameTitleDto>>() {}.getType()),
+            pageable,
+            gameTitles.getTotalPages());
   }
 
   private File getImageFile(MultipartFile image) throws IOException {

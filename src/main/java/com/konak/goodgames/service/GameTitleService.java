@@ -20,4 +20,6 @@ public interface GameTitleService {
     GameTitle getGameTitle(long gameTitleId);
 
     void delete(long gameTitleId) throws IOException;
+
+    Page<GameTitleDto> getMyGameTitles(Pageable pageable);
 }

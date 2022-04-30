@@ -12,4 +12,6 @@ public interface GameTitleRepository extends JpaRepository<GameTitle, Long> {
 
     @Query("select gt from GameTitle gt")
     Page<GameTitle> findAll(Pageable pageable);
+
+    Page<GameTitle> findAllByCreatedById(long createdById, Pageable pageable);
 }
