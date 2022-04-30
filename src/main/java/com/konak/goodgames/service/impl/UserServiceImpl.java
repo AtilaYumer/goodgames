@@ -4,6 +4,7 @@ import com.konak.goodgames.domain.dto.UserDto;
 import com.konak.goodgames.domain.dto.UserInfoDto;
 import com.konak.goodgames.domain.model.CustomUserDetails;
 import com.konak.goodgames.domain.model.User;
+import com.konak.goodgames.exception.BadRequestException;
 import com.konak.goodgames.exception.ConflictException;
 import com.konak.goodgames.exception.NotFoundException;
 import com.konak.goodgames.repository.UserRepository;
@@ -56,7 +57,7 @@ public class UserServiceImpl implements UserService {
       response.addHeader(HttpHeaders.AUTHORIZATION, jwtTokenUtil.generateToken(userDetails));
       response.setStatus(HttpStatus.OK.value());
     } catch (BadCredentialsException ex) {
-      throw new NotFoundException("Invalid credentials!");
+      throw new BadRequestException("Invalid credentials!");
     }
   }
 
