@@ -2,12 +2,13 @@ package com.konak.goodgames.service.impl;
 
 import com.konak.goodgames.domain.dto.UserDto;
 import com.konak.goodgames.domain.dto.UserInfoDto;
+import com.konak.goodgames.domain.enums.Role;
 import com.konak.goodgames.domain.model.CustomUserDetails;
 import com.konak.goodgames.domain.model.User;
 import com.konak.goodgames.exception.BadRequestException;
 import com.konak.goodgames.exception.ConflictException;
-import com.konak.goodgames.exception.NotFoundException;
 import com.konak.goodgames.repository.UserRepository;
+import com.konak.goodgames.repository.UserRoleRepository;
 import com.konak.goodgames.service.UserService;
 import com.konak.goodgames.util.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,8 @@ public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
 
+  private final UserRoleRepository userRoleRepository;
+
   @Override
   public void register(UserDto userDto) {
     Optional<User> userByEmail = userRepository.findByEmail(userDto.getEmail());
@@ -42,6 +45,7 @@ public class UserServiceImpl implements UserService {
       throw new ConflictException("User already exists!");
     }
     User user = modelMapperService.map(userDto, User.class);
+    user.setRole(userRoleRepository.findUserRoleByRole(Role.USER));
     userRepository.save(user);
   }
 
