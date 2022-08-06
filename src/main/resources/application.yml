@@ -1,0 +1,26 @@
+google:
+    drive:
+        credentials:
+            location: ${GOOGLE_APPLICATION_CREDENTIALS}
+jwt:
+    secret: konak
+server:
+    port: ${PORT:8080}
+spring:
+    datasource:
+        password: ${JDBC_DATABASE_PASSWORD}
+        url: ${JDBC_DATABASE_URL}
+        username: ${JDBC_DATABASE_USERNAME}
+    flyway:
+        locations: classpath:db/goodgames
+        password: ${JDBC_DATABASE_PASSWORD}
+        schemas: goodgames
+        url: ${JDBC_DATABASE_URL}
+        user: ${JDBC_DATABASE_USERNAME}
+    jpa:
+        hibernate:
+            ddl-auto: validate
+        properties:
+            hibernate:
+                default_schema: goodgames
+                dialect: org.hibernate.dialect.PostgreSQLDialect
