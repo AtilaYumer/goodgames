@@ -3,6 +3,7 @@ package com.konak.goodgames.service.impl;
 import com.konak.goodgames.domain.dto.CommentDto;
 import com.konak.goodgames.domain.dto.GameTitleDto;
 import com.konak.goodgames.domain.dto.UserDto;
+import com.konak.goodgames.domain.dto.UserInfoDto;
 import com.konak.goodgames.domain.model.Comment;
 import com.konak.goodgames.domain.model.GameTitle;
 import com.konak.goodgames.domain.model.Like;
@@ -15,13 +16,25 @@ import org.springframework.stereotype.Service;
 public class ModelMapperService extends ModelMapper {
 
   public ModelMapperService() {
+      userToUserDto();
     userDtoToUser();
     gameTitleToGameTitleDto();
     likeToLong();
     commentToCommentDto();
   }
 
-  private void userDtoToUser() {
+    private void userToUserDto() {
+        createTypeMap(User.class, UserInfoDto.class)
+                .setPostConverter(
+                        mappingContext -> {
+                            User source = mappingContext.getSource();
+                            UserInfoDto destination = mappingContext.getDestination();
+                            destination.setRole(source.getRole().getRole());
+                            return destination;
+                        });
+    }
+
+    private void userDtoToUser() {
     createTypeMap(UserDto.class, User.class)
         .setPostConverter(
             mappingContext -> {
