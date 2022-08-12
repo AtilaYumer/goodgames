@@ -19,7 +19,7 @@ public class UserController {
 
   private final UserService userService;
 
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
   @GetMapping
   public List<UserInfoDto> getUsers() {
     return userService.getUsers();
@@ -41,7 +41,7 @@ public class UserController {
     return userService.getUserInfo();
   }
 
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
   @PutMapping(path = "/{userId}/role")
   public void updateUserRole(@RequestBody UserInfoDto userInfoDto,
                              @PathVariable long userId) {

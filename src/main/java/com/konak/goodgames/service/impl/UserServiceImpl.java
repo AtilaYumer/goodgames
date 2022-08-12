@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
       throw new ConflictException("User already exists!");
     }
     User user = modelMapperService.map(userDto, User.class);
-    user.setRole(userRoleRepository.findUserRoleByRole(Role.USER));
+    user.setRole(userRoleRepository.findUserRoleByRole(Role.ROLE_USER));
     userRepository.save(user);
   }
 
