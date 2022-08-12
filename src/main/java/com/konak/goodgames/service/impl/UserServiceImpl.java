@@ -7,11 +7,13 @@ import com.konak.goodgames.domain.model.CustomUserDetails;
 import com.konak.goodgames.domain.model.User;
 import com.konak.goodgames.exception.BadRequestException;
 import com.konak.goodgames.exception.ConflictException;
+import com.konak.goodgames.exception.NotFoundException;
 import com.konak.goodgames.repository.UserRepository;
 import com.konak.goodgames.repository.UserRoleRepository;
 import com.konak.goodgames.service.UserService;
 import com.konak.goodgames.util.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.TypeToken;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,6 +24,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -71,5 +74,23 @@ public class UserServiceImpl implements UserService {
     CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
     User user = userDetails.user();
     return modelMapperService.map(user, UserInfoDto.class);
+  }
+
+  @Override
+  public List<UserInfoDto> getUsers() {
+    List<User> users = userRepository.findAllByOrderByIdAsc();
+    return modelMapperService.map(users, new TypeToken<List<UserInfoDto>>(){}.getType());
+  }
+
+  @Override
+  public void updateUserRole(long userId, UserInfoDto userInfoDto) {
+    Optional<User> userById = userRepository.findById(userId);
+    if (userById.isPresent()) {
+      User user = userById.get();
+      user.setRole(userRoleRepository.findUserRoleByRole(userInfoDto.getRole()));
+      userRepository.save(user);
+    } else {
+      throw new NotFoundException(String.format("User with id %d does not exist.", userId));
+    }
   }
 }
